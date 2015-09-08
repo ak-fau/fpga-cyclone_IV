@@ -1,0 +1,6 @@
+Top.v
+*.chg
+*.log
+db
+incremental_db
+output_files
