@@ -149,9 +149,10 @@ module bemicro
 
    wire        sysclk;
    wire        sysrst;
+   wire        sysrst_n;
    wire [7:0]  led;
 
-   assign RESET_EXP_N = 1'b0;
+   assign RESET_EXP_N = sysrst_n;
 
    assign F_LED0 = ~led[0];
    assign F_LED1 = ~led[1];
@@ -286,17 +287,17 @@ module bemicro
 
    assign sysclk = CLK_FPGA_50M;
 
-   sync_rst rst (
+   sync_rst srst(
                  .clk(sysclk),
                  .resetn_in(CPU_RST_N),
                  .reset(sysrst),
-                 .resetn()
+                 .reset_n(sysrst_n)
                  );
 
    zscale_wrapper zs (
                       .clk(sysclk),
                       .reset(sysrst),
                       .led(led)
-                     );
+                      );
 
 endmodule

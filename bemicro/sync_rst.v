@@ -11,7 +11,7 @@ module sync_rst (
    reg        srst;
 
    assign reset = srst;
-   assign resetn = ~srst;
+   assign reset_n = ~srst;
 
    always @(posedge clk)
      begin
