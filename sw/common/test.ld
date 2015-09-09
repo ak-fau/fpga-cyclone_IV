@@ -22,7 +22,7 @@ SECTIONS
 
   /* text: test code section */
   . = 0x100;
-  .text : 
+  .text :
   {
     crt.o(.text)
     *(.text)
@@ -61,4 +61,3 @@ SECTIONS
   /* End of uninitalized data segement */
   _end = .;
 }
-
