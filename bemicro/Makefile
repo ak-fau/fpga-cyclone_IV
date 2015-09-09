@@ -11,6 +11,9 @@ ROCKET_CHIP ?= $(shell pwd)/../../rocket-chip
 
 ZS_TOP := Top.v
 
+SW_DIR := ../sw
+BOOTROM := $(SW_DIR)/bootrom.hex
+
 VERILOG_FILES := $(wildcard *.v)
 VERILOG_FILES += $(ZS_TOP)
 
@@ -56,6 +59,9 @@ $(ZS_TOP):
 	CONFIG=$(ZS_CONFIG) $(MAKE) -C $(ROCKET_CHIP)/fsim verilog
 	ln -s $(ROCKET_CHIP)/fsim/generated-src/Top.$(ZS_CONFIG).v $@
 
+$(BOOTROM):
+	$(MAKE) -C $(SW_DIR) bootrom
+
 map: smart.log $(PROJECT).map.rpt
 fit: smart.log $(PROJECT).fit.rpt
 asm: smart.log $(PROJECT).asm.rpt
@@ -77,7 +83,7 @@ $(PROJECT).fit.rpt: fit.chg $(PROJECT).map.rpt $(PIN_ASSIGNMENTS)
 	$(STAMP) asm.chg
 #	$(STAMP) sta.chg
 
-$(PROJECT).asm.rpt: asm.chg $(PROJECT).fit.rpt
+$(PROJECT).asm.rpt: asm.chg $(PROJECT).fit.rpt | $(BOOTROM)
 	$(QUARTUS)_asm $(ASM_ARGS) $(PROJECT)
 
 #$(PROJECT).sta.rpt: sta.chg $(PROJECT).fit.rpt
