@@ -50,6 +50,11 @@ objdump: bootrom.o
 
 bin: bootrom.bin
 
+bootrom.hex: bootrom.o
+	$(OBJCOPY) -O ihex --pad-to=0x1000 $< $@.tmp
+	grep -v ":0400000300000100F8" $@.tmp > $@
+	$(RM) $@.tmp
+
 %.hex: %.o
 	$(OBJCOPY) -O ihex $< $@
 
