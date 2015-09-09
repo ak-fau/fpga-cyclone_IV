@@ -74,7 +74,7 @@ FIT_ARGS := $(COMMON_ARGS) --part="EP4CE22F17C7"
 ASM_ARGS := $(COMMON_ARGS)
 STA_ARGS :=
 
-$(PROJECT).map.rpt: map.chg $(VERILOG_FILES)
+$(PROJECT).map.rpt: map.chg $(VERILOG_FILES) | $(BOOTROM)
 	$(QUARTUS)_map $(MAP_ARGS) $(PROJECT)
 	$(STAMP) fit.chg
 
@@ -83,7 +83,7 @@ $(PROJECT).fit.rpt: fit.chg $(PROJECT).map.rpt $(PIN_ASSIGNMENTS)
 	$(STAMP) asm.chg
 #	$(STAMP) sta.chg
 
-$(PROJECT).asm.rpt: asm.chg $(PROJECT).fit.rpt | $(BOOTROM)
+$(PROJECT).asm.rpt: asm.chg $(PROJECT).fit.rpt
 	$(QUARTUS)_asm $(ASM_ARGS) $(PROJECT)
 
 #$(PROJECT).sta.rpt: sta.chg $(PROJECT).fit.rpt
