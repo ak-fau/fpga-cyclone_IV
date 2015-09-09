@@ -1,35 +1,63 @@
 
-TARGET := cnt
+TARGET := led
 
 RM := rm -f
 CC := $(CROSS_COMPILE)gcc
-CFLAGS := -m32 -O1
+CFLAGS := -m32 -static -Wa,-march=RVIM -O2 -fno-common -fno-builtin-printf
+CFLAGS += -I./common
 
-.PHONY: all clean distclean objdump hex bin
+LD := $(CC)
+LDFLAGS := -m32 -nostdlib -nostartfiles -ffast-math -lc -lgcc
+LDSCRIPT:= ./common/test.ld
 
-all: $(TARGET).o
+OBJDUMP := $(CROSS_COMPILE)objdump
+OBJCOPY := $(CROSS_COMPILE)objcopy
+
+COMMON_CFILES := $(wildcard common/*.c)
+COMMON_SFILES := $(wildcard common/*.S)
+TARGET_CFILES := $(wildcard $(TARGET)/*.c)
+
+OFILES := $(patsubst %.S,%.o,$(COMMON_SFILES))
+OFILES += $(patsubst %.c,%.o,$(COMMON_CFILES))
+OFILES += $(patsubst %.c,%.o,$(TARGET_CFILES))
+
+.PHONY: all clean distclean objdump hex bin bootrom
+
+all: bootrom
+
+bootrom: bootrom.hex
+
+# crt.o is explicitly referenced from .ld script,
+# so handle it separately
+OFILES := $(patsubst common/crt.o,,$(OFILES))
+crt.o: ./common/crt.o
+	ln -s $< $@
+
+bootrom.o: $(OFILES) | crt.o $(LDSCRIPT)
+	$(LD) $(LDFLAGS) -T $(LDSCRIPT) -o $@ $(OFILES)
 
 clean:
-	$(RM) *.o *.s
+	$(RM) *.o
+	$(RM) common/*.o
+	$(RM) $(TARGET)/*.o
 	$(RM) *.hex *.bin
 
 distclean: clean
 	$(RM) *~
 
-objdump: $(TARGET).o
-	$(CROSS_COMPILE)objdump -d $<
+objdump: bootrom.o
+	$(OBJDUMP) -d $<
 
-hex: $(TARGET).hex
-bin: $(TARGET).bin
+bin: bootrom.bin
 
 %.hex: %.o
-	$(CROSS_COMPILE)objcopy -O ihex $< $@
+	$(OBJCOPY) -O ihex $< $@
 
 %.bin: %.o
-	$(CROSS_COMPILE)objcopy -O binary $< $@
+	$(OBJCOPY) -O binary $< $@
 
-%.s: %.c
-	$(CC) $(CFLAGS) -S -o $@ $<
+%.o: %.S
+	$(CC) $(CFLAGS) -c -o $@ $<
 
 %.o: %.c
 	$(CC) $(CFLAGS) -c -o $@ $<
