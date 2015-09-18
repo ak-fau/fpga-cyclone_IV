@@ -11,6 +11,11 @@ ROCKET_CHIP ?= $(shell pwd)/../../rocket-chip
 
 ZS_TOP := Top.v
 
+SW_DIR := ../sw
+BOOTROM := bootrom.mif
+BOOTROM_HEX := $(SW_DIR)/$(patsubst %.mif,%.hex,$(BOOTROM))
+HEX2MIF := ./hex2mif.py
+
 VERILOG_FILES := $(wildcard *.v)
 VERILOG_FILES += $(ZS_TOP)
 
@@ -26,14 +31,15 @@ all: smart.log $(PROJECT).asm.rpt
 
 distclean: clean
 	$(RM) *~
-	$(RM) -r db incremental_db
+	$(RM) -r db incremental_db greybox_tmp
 	$(RM) $(ZS_TOP)
 
 clean:
 	$(RM) -r output_files
-	$(RM) *.rpt *.chg *.htm *.txt *.eqn *.pin *.sof *.pof smart.log *.summary
+	$(RM) $(BOOTROM)
+	$(RM) *.bak *.qws *.rpt *.chg *.htm *.txt *.eqn *.pin *.sof *.pof smart.log *.summary
 
-.PHONY: convert pgm cfg
+.PHONY: convert pgm cfg sw
 
 pgm: output_files/$(PROJECT).jic
 ifdef REMOTE_JTAG
@@ -56,6 +62,12 @@ $(ZS_TOP):
 	CONFIG=$(ZS_CONFIG) $(MAKE) -C $(ROCKET_CHIP)/fsim verilog
 	ln -s $(ROCKET_CHIP)/fsim/generated-src/Top.$(ZS_CONFIG).v $@
 
+sw:
+	$(MAKE) -C $(SW_DIR) bootrom
+
+$(BOOTROM): sw $(BOOTROM_HEX) $(HEX2MIF)
+	$(HEX2MIF) < $(BOOTROM_HEX) > $@
+
 map: smart.log $(PROJECT).map.rpt
 fit: smart.log $(PROJECT).fit.rpt
 asm: smart.log $(PROJECT).asm.rpt
@@ -68,7 +80,7 @@ FIT_ARGS := $(COMMON_ARGS) --part="EP4CE22F17C7"
 ASM_ARGS := $(COMMON_ARGS)
 STA_ARGS :=
 
-$(PROJECT).map.rpt: map.chg $(VERILOG_FILES)
+$(PROJECT).map.rpt: map.chg $(VERILOG_FILES) | $(BOOTROM)
 	$(QUARTUS)_map $(MAP_ARGS) $(PROJECT)
 	$(STAMP) fit.chg
 

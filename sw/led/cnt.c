@@ -1,14 +1,13 @@
 
-void inc_cnt(void)
+#include "zscale.h"
+
+void main(void)
 {
   unsigned int delay;
-  unsigned char cnt;
-
-  cnt = 0;
+  unsigned char cnt=0;
 
   while (1) {
-    *(volatile unsigned char *)0x80000000 = cnt++;
-    for (delay=25000000; delay; delay--) /* do nothing */;
+    *(volatile unsigned char *)LED_ADDR = cnt++;
+    for (delay=2500000; delay; delay--); /* do nothing */
   }
 }
-
