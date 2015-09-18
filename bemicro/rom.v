@@ -2,7 +2,6 @@ module ROM (
             input wire         clk,
             input wire         reset,
             input wire [31:0]  haddr,
-
             input wire         hwrite,
             input wire [2:0]   hsize,
             input wire [2:0]   hburst,
@@ -17,11 +16,15 @@ module ROM (
             output wire        hresp
             );
 
+   wire [11:0] addr;
+
    assign hreadyout = 1'b1;
    assign hresp = 1'b0;
 
+   assign addr = {12 {!reset}} & haddr[11:0];
+
    alt_rom mem(.clock(clk),
-               .address(haddr[13:2]),
+               .address(addr),
                .q(hrdata));
 
 endmodule

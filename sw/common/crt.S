@@ -22,7 +22,8 @@ machine_trap_entry:
   .align 6
   .globl _start
 _start:
-  li  x1, 0
+        j main
+//  li  x1, 0
   li  x2, 0
   li  x3, 0
   li  x4, 0
@@ -60,7 +61,7 @@ _start:
   # initialize global pointer
   la gp, _gp
 
-  la  tp, _end + 63
+  la  tp, _data_end + 63
   and tp, tp, -64
 
   # get core id

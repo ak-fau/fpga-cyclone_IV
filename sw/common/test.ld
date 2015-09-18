@@ -1,63 +1,28 @@
-/*======================================================================*/
-/* Proxy kernel linker script                                           */
-/*======================================================================*/
-/* This is the linker script used when building the proxy kernel. */
-
-/*----------------------------------------------------------------------*/
-/* Setup                                                                */
-/*----------------------------------------------------------------------*/
-
-/* The OUTPUT_ARCH command specifies the machine architecture where the
-   argument is one of the names used in the BFD library. More
-   specifically one of the entires in bfd/cpu-mips.c */
 
 OUTPUT_ARCH( "riscv" )
-
-/*----------------------------------------------------------------------*/
-/* Sections                                                             */
-/*----------------------------------------------------------------------*/
-
 SECTIONS
 {
 
-  /* text: test code section */
+  /* text: code section */
   . = 0x100;
-  .text :
-  {
-    crt.o(.text)
-    *(.text)
+  .text : {
+      crt.o(.text)
+      *(.text)
   }
+  _text_end = .;
 
-  /* data segment */
-  .data : { *(.data) }
-
-  .sdata : {
-    _gp = . + 0x800;
-    *(.srodata.cst16) *(.srodata.cst8) *(.srodata.cst4) *(.srodata.cst2) *(.srodata*)
-    *(.sdata .sdata.* .gnu.linkonce.s.*)
+  /* data segment (RAM)*/
+  . = 0x20000000;
+  .data : {
+      _gp = . + 0x800;
+      *(.data)
   }
+  _data_end = .;
 
   /* bss segment */
-  .sbss : {
-    *(.sbss .sbss.* .gnu.linkonce.sb.*)
-    *(.scommon)
+  .bss : {
+      _bss_start = .;
+      *(.bss)
+      _bss_end = .;
   }
-  .bss : { *(.bss) }
-
-  /* thread-local data segment */
-  .tdata :
-  {
-    _tls_data = .;
-    crt.o(.tdata.begin)
-    *(.tdata)
-    crt.o(.tdata.end)
-  }
-  .tbss :
-  {
-    *(.tbss)
-    crt.o(.tbss.end)
-  }
-
-  /* End of uninitalized data segement */
-  _end = .;
 }

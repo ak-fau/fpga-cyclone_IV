@@ -1,6 +1,10 @@
 Top.v
 *.chg
 *.log
+bootrom.mif
 db
 incremental_db
 output_files
+greybox_tmp
+*.qws
+*.bak

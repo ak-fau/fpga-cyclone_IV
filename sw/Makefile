@@ -31,9 +31,9 @@ bootrom: bootrom.hex
 # so handle it separately
 OFILES := $(patsubst common/crt.o,,$(OFILES))
 crt.o: ./common/crt.o
-	ln -s $< $@
+	ln -sf $< $@
 
-bootrom.o: $(OFILES) | crt.o $(LDSCRIPT)
+bootrom.o: $(OFILES) crt.o $(LDSCRIPT)
 	$(LD) $(LDFLAGS) -T $(LDSCRIPT) -o $@ $(OFILES)
 
 clean:
@@ -51,9 +51,7 @@ objdump: bootrom.o
 bin: bootrom.bin
 
 bootrom.hex: bootrom.o
-	$(OBJCOPY) -O ihex --pad-to=0x1000 $< $@.tmp
-	grep -v ":0400000300000100F8" $@.tmp > $@
-	$(RM) $@.tmp
+	$(OBJCOPY) -O ihex -j.text* -j.rodata $< $@
 
 %.hex: %.o
 	$(OBJCOPY) -O ihex $< $@

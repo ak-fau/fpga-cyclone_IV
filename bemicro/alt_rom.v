@@ -87,11 +87,11 @@ module alt_rom (
 `ifdef NO_PLI
 		altsyncram_component.init_file = "../sw/bootrom.rif"
 `else
-		altsyncram_component.init_file = "../sw/bootrom.hex"
+		altsyncram_component.init_file = "./bootrom.mif"
 `endif
 ,
 		altsyncram_component.intended_device_family = "Cyclone IV E",
-		altsyncram_component.lpm_hint = "ENABLE_RUNTIME_MOD=YES,INSTANCE_NAME=boot",
+		altsyncram_component.lpm_hint = "ENABLE_RUNTIME_MOD=NO",
 		altsyncram_component.lpm_type = "altsyncram",
 		altsyncram_component.numwords_a = 4096,
 		altsyncram_component.operation_mode = "ROM",
@@ -121,10 +121,10 @@ endmodule
 // Retrieval info: PRIVATE: INIT_FILE_LAYOUT STRING "PORT_A"
 // Retrieval info: PRIVATE: INIT_TO_SIM_X NUMERIC "0"
 // Retrieval info: PRIVATE: INTENDED_DEVICE_FAMILY STRING "Cyclone IV E"
-// Retrieval info: PRIVATE: JTAG_ENABLED NUMERIC "1"
-// Retrieval info: PRIVATE: JTAG_ID STRING "boot"
+// Retrieval info: PRIVATE: JTAG_ENABLED NUMERIC "0"
+// Retrieval info: PRIVATE: JTAG_ID STRING "NONE"
 // Retrieval info: PRIVATE: MAXIMUM_DEPTH NUMERIC "0"
-// Retrieval info: PRIVATE: MIFfilename STRING "../sw/bootrom.hex"
+// Retrieval info: PRIVATE: MIFfilename STRING "./bootrom.mif"
 // Retrieval info: PRIVATE: NUMWORDS_A NUMERIC "4096"
 // Retrieval info: PRIVATE: RAM_BLOCK_TYPE NUMERIC "0"
 // Retrieval info: PRIVATE: RegAddr NUMERIC "1"
@@ -139,9 +139,9 @@ endmodule
 // Retrieval info: CONSTANT: ADDRESS_ACLR_A STRING "NONE"
 // Retrieval info: CONSTANT: CLOCK_ENABLE_INPUT_A STRING "BYPASS"
 // Retrieval info: CONSTANT: CLOCK_ENABLE_OUTPUT_A STRING "BYPASS"
-// Retrieval info: CONSTANT: INIT_FILE STRING "../sw/bootrom.hex"
+// Retrieval info: CONSTANT: INIT_FILE STRING "./bootrom.mif"
 // Retrieval info: CONSTANT: INTENDED_DEVICE_FAMILY STRING "Cyclone IV E"
-// Retrieval info: CONSTANT: LPM_HINT STRING "ENABLE_RUNTIME_MOD=YES,INSTANCE_NAME=boot"
+// Retrieval info: CONSTANT: LPM_HINT STRING "ENABLE_RUNTIME_MOD=NO"
 // Retrieval info: CONSTANT: LPM_TYPE STRING "altsyncram"
 // Retrieval info: CONSTANT: NUMWORDS_A NUMERIC "4096"
 // Retrieval info: CONSTANT: OPERATION_MODE STRING "ROM"

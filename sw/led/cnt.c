@@ -8,6 +8,6 @@ void main(void)
 
   while (1) {
     *(volatile unsigned char *)LED_ADDR = cnt++;
-    for (delay=25000000; delay; delay--) /* do nothing */;
+    for (delay=2500000; delay; delay--); /* do nothing */
   }
 }
